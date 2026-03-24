@@ -5,3 +5,8 @@ api-version: 1.20
 author: VennLMAO
 folia-supported: true
 softdepend: [PlaceholderAPI]
+commands:
+  arisclear:
+    description: Quan tri ArisClear
+    usage: /arisclear clear
+    permission: arisclear.admin
