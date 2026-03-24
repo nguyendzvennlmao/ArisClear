@@ -1,0 +1,23 @@
+license-key: ""
+
+settings:
+  clear-interval: 600
+  sound-1p: "BLOCK_NOTE_BLOCK_PLING"
+  sound-5s: "BLOCK_NOTE_BLOCK_CHIME"
+  display:
+    chat: true
+    actionbar: true
+
+whitelist-entities:
+  - "VILLAGER"
+  - "ZOMBIE_VILLAGER"
+  - "ENDER_DRAGON"
+  - "MINECART"
+  - "MINECART_CHEST"
+  - "MINECART_HOPPER"
+
+messages:
+  prefix: "&#facc15&lᴀʀɪs ɴᴇᴛᴡᴏʀᴋ &8» "
+  warning-1p: "&#facc15ᴠậᴛ ᴘʜẩᴍ sẽ ʙị xóᴀ sᴀᴜ &f1 ᴘʜúᴛ&f, ᴠᴜɪ ʟòɴɢ ɴʜặᴛ ᴠậᴛ ᴘʜẩᴍ!"
+  warning-5s: "&#facc15ᴄʟᴇᴀʀ ɪᴛᴇᴍ sᴀᴜ &f%time%s"
+  cleared: "&#ff0812đã ᴄʟᴇᴀʀ ʜếᴛ ɪᴛᴇᴍ ᴛʀêɴ ᴍặᴛ đấᴛ!"
