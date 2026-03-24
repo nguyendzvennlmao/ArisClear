@@ -1,0 +1,7 @@
+name: ArisClear
+version: 1.0
+main: me.aris.arisclear.ArisClear
+api-version: 1.20
+author: VennLMAO
+folia-supported: true
+softdepend: [PlaceholderAPI]
