@@ -7,6 +7,10 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -17,12 +21,13 @@ import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ArisClear extends JavaPlugin implements Listener {
+public class ArisClear extends JavaPlugin implements Listener, CommandExecutor, TabCompleter {
 
     private int timeLeft;
     private final String K = "QVJJUy1ORVRXT1JLLVNUuTJF";
@@ -43,6 +48,8 @@ public class ArisClear extends JavaPlugin implements Listener {
         }
         Bukkit.getConsoleSender().sendMessage(color("&#00ff00&lᴀʀɪs ɴᴇᴛᴡᴏʀᴋ ʟɪᴄᴇɴsᴇ đã ᴋíᴄʜ ʜᴏạᴛ"));
         Bukkit.getPluginManager().registerEvents(this, this);
+        getCommand("arisclear").setExecutor(this);
+        getCommand("arisclear").setTabCompleter(this);
         timeLeft = getConfig().getInt("settings.clear-interval");
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) new ArisPlaceholder(this).register();
         startTimer();
@@ -58,6 +65,25 @@ public class ArisClear extends JavaPlugin implements Listener {
                 timeLeft--;
             }
         }, 1L, 20L);
+    }
+
+    @Override
+    public boolean onCommand(@NotNull CommandSender s, @NotNull Command c, @NotNull String l, String[] a) {
+        if (a.length > 0 && a[0].equalsIgnoreCase("clear")) {
+            if (!s.hasPermission("arisclear.admin")) return true;
+            timeLeft = 60;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public List<String> onTabComplete(@NotNull CommandSender s, @NotNull Command c, @NotNull String l, String[] a) {
+        List<String> sug = new ArrayList<>();
+        if (a.length == 1) {
+            if (s.hasPermission("arisclear.admin")) sug.add("clear");
+        }
+        return sug;
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -160,4 +186,4 @@ public class ArisClear extends JavaPlugin implements Listener {
             return null;
         }
     }
-}
+    }
